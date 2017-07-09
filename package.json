@@ -1,0 +1,25 @@
+{
+  "name": "node-module-hot",
+  "version": "1.0.0",
+  "description": "node-module-hot gives you the power that modify your node modules without restarting node process. it's useful for developing node server-side.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yessky/node-module-hot.git"
+  },
+  "keywords": [
+    "node",
+    "module",
+    "hot",
+    "server-side"
+  ],
+  "author": "aaron.xiao <admin@veryos.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yessky/node-module-hot/issues"
+  },
+  "homepage": "https://github.com/yessky/node-module-hot#readme",
+  "dependencies": {
+    "chokidar": "^1.7.0"
+  }
+}
