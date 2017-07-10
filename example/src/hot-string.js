@@ -1,1 +1,1 @@
-module.exports = 'hot-string';
+module.exports = 'hot-string-updated';

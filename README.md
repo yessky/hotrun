@@ -23,9 +23,7 @@ import `node-module-hot` and configure it in your development server entry, like
 const fs = require('fs');
 const path = require('path');
 const Koa = require('koa');
-const chokidar = require('chokidar');
-const Module = require('module');
-const emitter = require('../')(['.js'], {
+const emitter = require('node-module-hot')(['.js'], {
   context: path.resolve(__dirname, './src')
 });
 const middleware = require('./src/middleware');

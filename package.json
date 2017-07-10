@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "node-module-hot gives you the power that modify your node modules without restarting node process. it's useful for developing node server-side.",
   "main": "index.js",
+  "bin": {
+    "nmh": "bin/nmh"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yessky/node-module-hot.git"
@@ -20,6 +23,7 @@
   },
   "homepage": "https://github.com/yessky/node-module-hot#readme",
   "dependencies": {
-    "chokidar": "^1.7.0"
+    "chokidar": "^1.7.0",
+    "commander": "^2.11.0"
   }
 }

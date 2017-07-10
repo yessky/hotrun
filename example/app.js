@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const Koa = require('koa');
-const chokidar = require('chokidar');
-const Module = require('module');
 const emitter = require('../')(['.js'], {
   context: path.resolve(__dirname, './src')
 });
