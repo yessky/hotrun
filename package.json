@@ -1,6 +1,6 @@
 {
   "name": "node-module-hot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "node-module-hot gives you the power that modify your node modules without restarting node process. it's useful for developing node server-side.",
   "main": "index.js",
   "bin": {
