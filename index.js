@@ -1,3 +1,12 @@
+/*
+  module:
+    node-module-hot
+  author:
+    aaron.xiao<admin@veryos.com>
+  summary:
+    used to speed up develpment, while modify any node codes, you don't restart your process
+*/
+
 const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
@@ -78,8 +87,9 @@ function registerExtension(ext = '.js', opts = {}) {
   }
 }
 
-module.exports = (exts = ['.js'], opts = {}) => {
-  exts.forEach(ext => registerExtension(ext, opts));
+module.exports = (opts = {}) => {
+  const extensions = Array.isArray(opts.extensions) ? opts.extensions : ['.js'];
+  extensions.forEach(ext => registerExtension(ext, opts));
   const emitter = new EventEmitter();
   const context = opts.context || process.cwd();
   const watcher = chokidar.watch([context]);

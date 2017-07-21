@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Koa = require('koa');
-const emitter = require('../')(['.js'], {
+const emitter = require('../')({
   context: path.resolve(__dirname, './src')
 });
 const middleware = require('./src/middleware');

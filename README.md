@@ -1,16 +1,16 @@
 # node-module-hot
-node-module-hot gives you the power that modify your node modules without restarting node process. it's useful for developing node server-side.
+using `node-module-hot`, we don't need to restart node process while modifying any codes. it's useful for speed-up development.
 
 #### NOTICE: do not use it in production mode.
 
 ## Description
 with `node-module-hot`:
 
-you almost do not need modules like `nodemon`/`pm2`/`supervisor` to restart you node process while module were modified.
+we don't need `nodemon`/`pm2`/`supervisor` any more
 
-you do not need to put one bit special code in your moddules which want to be hot compiled.
+no special codes to inject into your codes
 
-you start developing with almost zero config for this module.
+simply configuration
 
 ## Install
 `npm install --save-dev node-module-hot`
@@ -23,7 +23,8 @@ import `node-module-hot` and configure it in your development server entry, like
 const fs = require('fs');
 const path = require('path');
 const Koa = require('koa');
-const emitter = require('node-module-hot')(['.js'], {
+const emitter = require('node-module-hot')({
+  extensions: ['.js'],
   context: path.resolve(__dirname, './src')
 });
 const middleware = require('./src/middleware');
@@ -76,15 +77,17 @@ see `./example/src/hot-number.js`
 ```JavaScript
 module.exports = 'hot-number';
 ```
-so, If you reach here, I guess you alreay understand its power, just try with the working example `./exmaple`, run `cd ./example && node app.js`, then do some changes in `src` folder, then reload your browser, and finally you see the changes.
 
 ## Usage
 ```JavaScript
-const emitter = require('../')(['.js'], {
+const emitter = require('../')({
+  extensions: ['.js'],
   verbose: true,
   context: path.resolve(__dirname, './src')
 });
 ```
+#### options.extensions
+specified which extension files to be hot compiling
 
 #### options.verbose
 used for listing debug info
