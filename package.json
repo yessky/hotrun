@@ -1,6 +1,6 @@
 {
   "name": "node-module-hot",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "hot module compiled for node.js, no need to restart server. it's useful to speed-up node.js development",
   "main": "index.js",
   "bin": {

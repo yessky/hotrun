@@ -50,14 +50,11 @@ function registerExtension(ext = '.js', opts = {}) {
             return module.__hotRef.apply(module.exports, args)
           }
         }
-      } else if (ctor === 'Array' || ctor === 'Function') {
+      } else if (ctor === 'Array' || ctor === 'Object') {
         hotExports = newExports
       }
       if (hotExports) {
-        module.__hotExports = hotExports;
-        if (opts.verbose) {
-          console.log(`[HOT] created hot wrapper for ${module.id}`)
-        }
+        module.__hotExports = hotExports
       }
     }
     // hot update wrapped exports
@@ -71,7 +68,7 @@ function registerExtension(ext = '.js', opts = {}) {
         Object.assign(hotExports, newExports)
       } if (ctor === 'Object') {
         for (let i in hotExports) {
-          if (!newExports.hasOwnPropety(i)) {
+          if (!newExports.hasOwnProperty(i)) {
             delete hotExports[i]
           }
         }
@@ -79,10 +76,7 @@ function registerExtension(ext = '.js', opts = {}) {
       } else {
         module.__hotRef = newExports
       }
-      module.exports = hotExports;
-      if (opts.verbose) {
-        console.log(`[HOT] hot update applied for wrapped ${module.id}`)
-      }
+      module.exports = hotExports
     }
   }
 }
@@ -94,18 +88,17 @@ module.exports = (opts = {}) => {
   const context = opts.context || process.cwd();
   const watcher = chokidar.watch([context]);
   watcher.on('ready', () => {
-    watcher.on('all', () => {
+    watcher.on('all', (evt, filename) => {
+      let ext = path.parse(filename).ext;
+      if (filename.indexOf('node_modules') > -1 || extensions.indexOf(ext) < 0) {
+        return
+      }
       let startTime = Date.now();
-      Object.keys(Module._cache).forEach((mid) => {
-        if (mid.indexOf('node_modules') < 0 && (!context || mid.indexOf(context) > -1)) {
-          let mod = Module._cache[mid];
-          let ext = path.parse(mod.filename).ext;
-          let handler = Module._extensions[ext];
-          handler && handler(mod, mod.filename)
-        }
-      });
-      if (opts.verbose) {
-        console.log(`[HOT] hot compiled in ${Date.now() - startTime} ms`)
+      let mod = Module._cache[filename];
+      let handler = Module._extensions[ext];
+      if (mod && handler) {
+        handler(mod, mod.filename);
+        console.log(`[HOT] compiled in ${Date.now() - startTime} ms`)
       }
       emitter.emit('hot')
     })
