@@ -95,14 +95,18 @@ module.exports = (opts = {}) => {
   const watcher = chokidar.watch([context]);
   watcher.on('ready', () => {
     watcher.on('all', () => {
+      let startTime = Date.now();
       Object.keys(Module._cache).forEach((mid) => {
-        if (mid.indexOf('node_modules') < 0 && mid.indexOf(context) > -1) {
+        if (mid.indexOf('node_modules') < 0 && (!context || mid.indexOf(context) > -1)) {
           let mod = Module._cache[mid];
           let ext = path.parse(mod.filename).ext;
           let handler = Module._extensions[ext];
           handler && handler(mod, mod.filename)
         }
       });
+      if (opts.verbose) {
+        console.log(`[HOT] hot compiled in ${Date.now() - startTime} ms`)
+      }
       emitter.emit('hot')
     })
   });
