@@ -49,7 +49,22 @@ server.listen(3100, (err) => {
 })
 ```
 
-## Usage
+## CLI Options
+```
+-d, --debug [port]               Start debugger on port
+-b, --debug-brk                  Enable debug break mode
+-i, --inspect                    Enable inspect mode
+-e, --extensions [extensions]    List of extensions to hook into [.es6,.js,.es,.jsx]
+-w, --watch [dir]                Watch directory "dir" or files, to hot compile
+-f, --force [dir]                Force restart if directory "dir" or files changed
+-x, --exclude [dir]              Exclude matching directory/files from watcher
+-p, --use-polling                In some filesystems watch events may not work correcly. 
+                                 This option enables "polling" which should mitigate this type of issues
+-V, --version                    output the version number
+-h, --help                       output usage information
+```
+
+## API Options
 ```JavaScript
 const emitter = require('../')({
   extensions: ['.js'],
