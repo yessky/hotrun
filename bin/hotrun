@@ -1,0 +1,143 @@
+#!/usr/bin/env node
+
+/*
+  author:
+    aaron.xiao<admin@veryos.com>
+  summary:
+    hotrun is a node app runner that lets you hot-compile or reload the app on source file changes
+*/
+
+const path = require('path');
+const { fork, spawn } = require('child_process');
+const Module = require('module');
+const program = require('commander');
+const chokidar = require('chokidar');
+const pkg = require('../package.json');
+const log = require('../lib/log');
+
+const cwd = process.cwd();
+
+function collect(val, memo) {
+  memo.push(val);
+  return memo
+}
+
+program
+  .option('-d, --debug [port]', 'Start debugger on port')
+  .option('-b, --debug-brk', 'Enable debug break mode')
+  .option('-i, --inspect', 'Enable inspect mode')
+  .option('-e, --extensions [extensions]  ', 'List of extensions to hook into [.es6,.js,.es,.jsx]')
+  .option('-w, --watch [dir]', 'Watch directory "dir" or files, to hot compile', collect, [])
+  .option('-f, --force [dir]', 'Force restart if directory "dir" or files changed', collect, [])
+  .option('-x, --exclude [dir]', 'Exclude matching directory/files from watcher', collect, [])
+  .option('-p, --use-polling', 'In some filesystems watch events may not work correcly. This option enables "polling" which should mitigate this type of issues')
+  .version(pkg.version)
+  .usage('[options] [script.js] [args]')
+  .description('hotrun is a node app runner that lets you hot-compile or reload the app on source file changes')
+
+  .parse(process.argv);
+
+const mainModule = program.args[0];
+if (!mainModule) {
+  log('main script not specified', 3);
+  process.exit(1)
+}
+if (!mainModule.startsWith('.') && !mainModule.startsWith('/')) {
+  program.args[0] = path.join(cwd, mainModule)
+}
+
+let childApp;
+const forces = (program.force || []).map(x => path.join(cwd, x));
+const excludes = [path.join(cwd, 'node_modules')].concat(program.exclude);
+const watcher = chokidar.watch(program.watch, {
+  persistent: true,
+  ignored: excludes,
+  ignoreInitial: true,
+  usePolling: program.usePolling,
+});
+let watcherReady = program.watch.length === 0;
+
+process.on('SIGINT', () => {
+  watcher.close();
+  process.exit(1)
+});
+
+watcher.on('change', handleChange);
+watcher.on('add', handleChange);
+watcher.on('unlink', handleChange);
+watcher.on('ready', () => {
+  if (!watcherReady) {
+    watcherReady = true;
+    startApp()
+  }
+});
+watcher.on('error', (error) => {
+  log('watcher failed', 3);
+  console.error(error);
+  process.exit(1)
+});
+
+restartApp();
+
+function restartApp() {
+  if (!watcherReady) return
+  if (watcherReady && childApp) {
+    var message = program.message ? program.message : '>>> RESTARTING <<<';
+    log(message, 2);
+    killApp()
+  } else {
+    startApp()
+  }
+}
+
+function killApp() {
+  if (childApp) {
+    childApp.on('exit', () => {
+      startApp()
+    });
+    try {
+      childApp.kill('SIGHUP')
+    } catch (error) {
+      childApp.kill('SIGKILL')
+    }
+    childApp = null
+  }
+}
+
+function startApp() {
+  const execArgv = process.execArgv.slice(0);
+  if (program.debug) {
+    execArgv.push('--debug=' + program.debug);
+  }
+  if (program.inspect) {
+    execArgv.push('--inspect');
+  }
+  if (program.debugBrk) {
+    execArgv.push('--debug-brk');
+  }
+  const app = fork(path.resolve(__dirname, 'runner'), { execArgv: execArgv });
+  app.send({
+    action: 'START',
+    args: program.args,
+    extensions: program.extensions || ['.js']
+  });
+  childApp = app
+}
+
+function handleChange(filename) {
+  filename = filename.startsWith('/') ? filename : path.join(cwd, filename);
+  if (shouldRestart(filename)) {
+    return restartApp()
+  }
+  if (childApp) {
+    childApp.send({
+      action: 'COMPILE',
+      filename: filename
+    })
+  }
+}
+
+function shouldRestart(filename) {
+  if (!forces.length) return false
+  return forces.some(x => x.indexOf(filename) > -1)
+}

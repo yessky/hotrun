@@ -1,10 +1,10 @@
 {
-  "name": "node-module-hot",
+  "name": "hotrun",
   "version": "1.1.0",
   "description": "hot module compiled for node.js, no need to restart server. it's useful to speed-up node.js development",
   "main": "index.js",
   "bin": {
-    "nmh": "bin/nmh"
+    "hotrun": "./bin/hotrun"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
     "url": "https://github.com/yessky/node-module-hot/issues"
   },
   "homepage": "https://github.com/yessky/node-module-hot#readme",
+  "node": ">=7.8.0",
   "dependencies": {
     "chokidar": "^1.7.0",
     "commander": "^2.11.0"
