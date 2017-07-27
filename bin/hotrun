@@ -115,7 +115,7 @@ function startApp() {
   if (program.debugBrk) {
     execArgv.push('--debug-brk');
   }
-  const app = fork(path.resolve(__dirname, 'runner'), { execArgv: execArgv });
+  const app = fork(path.resolve(__dirname, 'runner.js'), { execArgv: execArgv });
   app.send({
     action: 'START',
     args: program.args,
@@ -139,5 +139,5 @@ function handleChange(filename) {
 
 function shouldRestart(filename) {
   if (!forces.length) return false
-  return forces.some(x => x.indexOf(filename) > -1)
+  return forces.some(x => filename.indexOf(x) > -1)
 }
