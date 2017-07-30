@@ -73,9 +73,6 @@ const emitter = require('hotrun')({
   exclude: 'path/to/exclue.js'
 });
 ```
-#### options.config
-Specify a json config file to start app
-
 #### options.extensions
 specify which extension files to be hot compiling
 
