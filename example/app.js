@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const Koa = require('koa');
-const emitter = require('../')({
-  watch: path.resolve(__dirname, './src')
-});
+// const emitter = require('../')({
+//   watch: path.resolve(__dirname, './src')
+// });
 const middleware = require('./src/middleware');
 
 const app = new Koa();

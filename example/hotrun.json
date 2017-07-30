@@ -1,0 +1,7 @@
+{
+    "watch": ".",
+    "force": [
+        "./hotrun.json",
+        "./app.js"
+    ]
+}

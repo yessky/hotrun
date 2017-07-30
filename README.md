@@ -30,7 +30,7 @@ import `node-module-hot` and configure it in your development server entry, like
 const fs = require('fs');
 const path = require('path');
 const Koa = require('koa');
-const emitter = require('node-module-hot')({
+const emitter = require('hotrun')({
   extensions: ['.js'],
   watch: path.resolve(__dirname, './src')
 });
@@ -54,25 +54,28 @@ server.listen(3100, (err) => {
 -d, --debug [port]               Start debugger on port
 -b, --debug-brk                  Enable debug break mode
 -i, --inspect                    Enable inspect mode
+-c, --config                     Specify a json config file
 -e, --extensions [extensions]    List of extensions to hook into [.es6,.js,.es,.jsx]
 -w, --watch [dir]                Watch directory "dir" or files, to hot compile
 -f, --force [dir]                Force restart if directory "dir" or files changed
 -x, --exclude [dir]              Exclude matching directory/files from watcher
--p, --use-polling                In some filesystems watch events may not work correcly. 
-                                 This option enables "polling" which should mitigate this type of issues
+-p, --use-polling                In some filesystems watch events may not work correcly. This option enables "polling" which should mitigate this type of issues
 -V, --version                    output the version number
 -h, --help                       output usage information
 ```
 
 ## API Options
 ```JavaScript
-const emitter = require('../')({
+const emitter = require('hotrun')({
   extensions: ['.js'],
   usePolling: true,
   watch: path.resolve(__dirname, './src'),
   exclude: 'path/to/exclue.js'
 });
 ```
+#### options.config
+Specify a json config file to start app
+
 #### options.extensions
 specify which extension files to be hot compiling
 

@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "../bin/hotrun -c hotrun.json app.js"
+  },
   "dependencies": {
     "chokidar": "^1.7.0",
     "koa": "^2.3.0"

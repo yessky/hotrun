@@ -7,6 +7,7 @@
     hotrun is a node app runner that lets you hot-compile or reload the app on source file changes
 */
 
+const fs = require('fs');
 const path = require('path');
 const { fork, spawn } = require('child_process');
 const Module = require('module');
@@ -26,6 +27,7 @@ program
   .option('-d, --debug [port]', 'Start debugger on port')
   .option('-b, --debug-brk', 'Enable debug break mode')
   .option('-i, --inspect', 'Enable inspect mode')
+  .option('-c, --config [path]', 'Specify a json config file')
   .option('-e, --extensions [extensions]  ', 'List of extensions to hook into [.es6,.js,.es,.jsx]')
   .option('-w, --watch [dir]', 'Watch directory "dir" or files, to hot compile', collect, [])
   .option('-f, --force [dir]', 'Force restart if directory "dir" or files changed', collect, [])
@@ -34,7 +36,6 @@ program
   .version(pkg.version)
   .usage('[options] [script.js] [args]')
   .description('hotrun is a node app runner that lets you hot-compile or reload the app on source file changes')
-
   .parse(process.argv);
 
 const mainModule = program.args[0];
@@ -42,20 +43,29 @@ if (!mainModule) {
   log('main script not specified', 3);
   process.exit(1)
 }
-if (!mainModule.startsWith('.') && !mainModule.startsWith('/')) {
-  program.args[0] = path.join(cwd, mainModule)
+program.args[0] = toAbsUrl(mainModule);
+
+let configUrl = program.config || 'hotrun.json';
+let configPath = toAbsUrl(configUrl);
+let config = {};
+if (fs.existsSync(configPath)) {
+  config = require(configPath);
+  log(`using config ${configUrl}`)
+} else {
+  Object.assign(config, program)
 }
 
 let childApp;
-const forces = (program.force || []).map(x => path.join(cwd, x));
-const excludes = [path.join(cwd, 'node_modules')].concat(program.exclude);
-const watcher = chokidar.watch(program.watch, {
+const forces = toArray(config.force).map(toAbsUrl);
+const excludes = [path.join(cwd, 'node_modules')].concat(toArray(config.exclude).map(toAbsUrl));
+const watches = toArray(config.watch).map(toAbsUrl);
+const watcher = chokidar.watch(watches, {
   persistent: true,
   ignored: excludes,
   ignoreInitial: true,
-  usePolling: program.usePolling,
+  usePolling: config.usePolling,
 });
-let watcherReady = program.watch.length === 0;
+let watcherReady = watches.length === 0;
 
 process.on('SIGINT', () => {
   watcher.close();
@@ -82,7 +92,7 @@ restartApp();
 function restartApp() {
   if (!watcherReady) return
   if (watcherReady && childApp) {
-    var message = program.message ? program.message : '>>> RESTARTING <<<';
+    var message = config.message ? config.message : '>>> restarting <<<';
     log(message, 2);
     killApp()
   } else {
@@ -106,26 +116,26 @@ function killApp() {
 
 function startApp() {
   const execArgv = process.execArgv.slice(0);
-  if (program.debug) {
-    execArgv.push('--debug=' + program.debug);
+  if (config.debug) {
+    execArgv.push('--debug=' + config.debug);
   }
-  if (program.inspect) {
+  if (config.inspect) {
     execArgv.push('--inspect');
   }
-  if (program.debugBrk) {
+  if (config.debugBrk) {
     execArgv.push('--debug-brk');
   }
   const app = fork(path.resolve(__dirname, 'runner.js'), { execArgv: execArgv });
   app.send({
     action: 'START',
     args: program.args,
-    extensions: program.extensions || ['.js']
+    extensions: config.extensions || ['.js']
   });
   childApp = app
 }
 
 function handleChange(filename) {
-  filename = filename.startsWith('/') ? filename : path.join(cwd, filename);
+  filename = toAbsUrl(filename);
   if (shouldRestart(filename)) {
     return restartApp()
   }
@@ -140,4 +150,12 @@ function handleChange(filename) {
 function shouldRestart(filename) {
   if (!forces.length) return false
   return forces.some(x => filename.indexOf(x) > -1)
+}
+
+function toAbsUrl(url) {
+  return (url.startsWith('/') || /^[a-z]+:\\/i.test(url)) ? url : path.join(cwd, url)
+}
+
+function toArray(obj) {
+  return Array.isArray(obj) ? obj : typeof obj === 'string' ? [obj] : []
 }
