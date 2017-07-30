@@ -1,2 +1,3 @@
 node_modules/
 exmaple/node_modules/
+**/npm-debug.log
