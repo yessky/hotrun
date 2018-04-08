@@ -5,11 +5,11 @@ hot module compiled for node.js, no need to restart server. it's useful to speed
 
 ## Description
 
-we don't need `nodemon`/`pm2`/`supervisor` any more
+- we don't need `nodemon`/`pm2`/`supervisor` any more
 
-no special codes to inject into your codes
+- no special codes to inject into your codes
 
-simply configuration
+- simply configuration
 
 ## Install
 local
@@ -25,7 +25,7 @@ global
 ## API Example
 a working example see `./example`.
 
-import `node-module-hot` and configure it in your development server entry, like `./example/app.js`
+import `hotrun` and configure it in your development server entry, like `./example/app.js`
 ```JavaScript
 const fs = require('fs');
 const path = require('path');
