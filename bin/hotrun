@@ -38,12 +38,12 @@ program
   .description('hotrun is a node app runner that lets you hot-compile or reload the app on source file changes')
   .parse(process.argv);
 
-const mainModule = program.args[0];
+const mainModule = program.args[ 0 ];
 if (!mainModule) {
   log('main script not specified', 3);
   process.exit(1)
 }
-program.args[0] = toAbsUrl(mainModule);
+program.args[ 0 ] = toAbsUrl(mainModule);
 
 let configUrl = program.config || 'hotrun.json';
 let configPath = toAbsUrl(configUrl);
@@ -57,7 +57,7 @@ if (fs.existsSync(configPath)) {
 
 let childApp;
 const forces = toArray(config.force).map(toAbsUrl);
-const excludes = [path.join(cwd, 'node_modules')].concat(toArray(config.exclude).map(toAbsUrl));
+const excludes = [ path.join(cwd, 'node_modules') ].concat(toArray(config.exclude).map(toAbsUrl));
 const watches = toArray(config.watch).map(toAbsUrl);
 const watcher = chokidar.watch(watches, {
   persistent: true,
@@ -69,7 +69,7 @@ let watcherReady = watches.length === 0;
 
 process.on('SIGINT', () => {
   watcher.close();
-  process.exit(1)
+  process.exit(0)
 });
 
 watcher.on('change', handleChange);
@@ -129,7 +129,7 @@ function startApp() {
   app.send({
     action: 'START',
     args: program.args,
-    extensions: config.extensions || ['.js']
+    extensions: config.extensions || [ '.js' ]
   });
   childApp = app
 }
@@ -157,5 +157,5 @@ function toAbsUrl(url) {
 }
 
 function toArray(obj) {
-  return Array.isArray(obj) ? obj : typeof obj === 'string' ? [obj] : []
+  return Array.isArray(obj) ? obj : typeof obj === 'string' ? [ obj ] : []
 }

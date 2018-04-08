@@ -16,8 +16,8 @@ const log = require('./lib/log');
 const cwd = process.cwd();
 
 module.exports = (opts = {}) => {
-  const extensions = Array.isArray(opts.extensions) ? opts.extensions : ['.js'];
-  const excludes = [path.join(cwd, 'node_modules')].concat(opts.exclude);
+  const extensions = Array.isArray(opts.extensions) ? opts.extensions : [ '.js' ];
+  const excludes = [ path.join(cwd, 'node_modules') ].concat(opts.exclude);
 
   extensions.forEach(hook);
 
@@ -31,14 +31,14 @@ module.exports = (opts = {}) => {
   });
   process.on('SIGINT', () => {
     watcher.close();
-    process.exit(1)
+    process.exit(0)
   });
   watcher.on('ready', () => {
     watcher.on('all', (evt, filename) => {
       const ts = Date.now();
       const ext = path.parse(filename).ext;
-      const module_ = Module._cache[filename];
-      const handle = Module._extensions[ext];
+      const module_ = Module._cache[ filename ];
+      const handle = Module._extensions[ ext ];
       if (module_ && handle) {
         handle(module_, module_.filename);
         log(`recompiled in ${Date.now() - ts} ms`);

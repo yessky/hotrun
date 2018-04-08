@@ -10,10 +10,11 @@ const app = new Koa();
 app.use(middleware);
 // emitter.on('hot', () => {
 //   console.log('module hot compiled done!')
+//   TODO: reload your web browser
 // });
 
 const server = require('http').createServer(app.callback());
 server.listen(3100, (err) => {
   if (err) throw err;
-  console.log('app running at port 3100')
+  console.log('app running at port 3100 updated')
 })

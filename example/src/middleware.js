@@ -11,7 +11,7 @@ module.exports = async (ctx, next) => {
   await hotAsyncFunc();
   ctx.type = 'html';
   ctx.body = `
-    node-module-hot tasting:<br>
+    hotrun tasting:<br>
     hot-string: ${hotString}<br>
     hot-number: ${hotNumber}<br>
     hot-boolean: ${hotBoolean}<br>
