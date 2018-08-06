@@ -6,7 +6,7 @@ const hotAsyncFunc = require('./hot-async-func');
 const hotArray = require('./hot-array');
 const hotObject = require('./hot-object');
 
-module.exports = async (ctx, next) => {
+module.exports = async (ctx) => {
   hotFunc();
   await hotAsyncFunc();
   ctx.type = 'html';

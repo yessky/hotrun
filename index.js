@@ -1,11 +1,10 @@
 /*
   author:
-    aaron.xiao<admin@veryos.com>
+    aaron.xiao - <admin@veryos.com>
   summary:
     hotrun is a node app runner that lets you hot-compile or reload the app on source file changes
 */
 
-const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
 const Module = require('module');
@@ -41,7 +40,7 @@ module.exports = (opts = {}) => {
       const handle = Module._extensions[ ext ];
       if (module_ && handle) {
         handle(module_, module_.filename);
-        log(`recompiled in ${Date.now() - ts} ms`);
+        log(`recompiled in ${ Date.now() - ts } ms`);
         emitter.emit('hot')
       }
     })

@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+// const fs = require('fs');
+// const path = require('path');
 const Koa = require('koa');
 // const emitter = require('../')({
 //   watch: path.resolve(__dirname, './src')
@@ -12,9 +12,7 @@ app.use(middleware);
 //   console.log('module hot compiled done!')
 //   TODO: reload your web browser
 // });
-
-const server = require('http').createServer(app.callback());
-server.listen(3100, (err) => {
+app.listen(3100, err => {
   if (err) throw err;
   console.log('app running at port 3100 updated')
-})
+});

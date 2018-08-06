@@ -4,6 +4,6 @@
   },
   "dependencies": {
     "chokidar": "^1.7.0",
-    "koa": "^2.3.0"
+    "koa": "^2.5.2"
   }
 }

@@ -2,31 +2,28 @@
 
 /*
   author:
-    aaron.xiao<admin@veryos.com>
+    aaron.xiao - <admin@veryos.com>
   summary:
     hotrun is a node app runner that lets you hot-compile or reload the app on source file changes
 */
 
 const fs = require('fs');
 const path = require('path');
-const { fork, spawn } = require('child_process');
-const Module = require('module');
+const { fork } = require('child_process');
 const program = require('commander');
 const chokidar = require('chokidar');
 const pkg = require('../package.json');
 const log = require('../lib/log');
 
 const cwd = process.cwd();
-
-function collect(val, memo) {
+const collect = function (val, memo) {
   memo.push(val);
   return memo
-}
+};
 
 program
-  .option('-d, --debug [port]', 'Start debugger on port')
-  .option('-b, --debug-brk', 'Enable debug break mode')
-  .option('-i, --inspect', 'Enable inspect mode')
+  .option('-i, --inspect [port]', 'Enable inspect mode on port')
+  .option('-b, --inspect-brk', 'Enable debug break mode')
   .option('-c, --config [path]', 'Specify a json config file')
   .option('-e, --extensions [extensions]  ', 'List of extensions to hook into [.es6,.js,.es,.jsx]')
   .option('-w, --watch [dir]', 'Watch directory "dir" or files, to hot compile', collect, [])
@@ -50,22 +47,31 @@ let configPath = toAbsUrl(configUrl);
 let config = {};
 if (fs.existsSync(configPath)) {
   config = require(configPath);
-  log(`using config ${configUrl}`)
+  log(`using config ${ configUrl }`)
 } else {
   Object.assign(config, program)
 }
 
-let childApp;
+let childApp, watcherReady;
 const forces = toArray(config.force).map(toAbsUrl);
 const excludes = [ path.join(cwd, 'node_modules') ].concat(toArray(config.exclude).map(toAbsUrl));
 const watches = toArray(config.watch).map(toAbsUrl);
+if (watches.length > 0) {
+  forces.forEach(f => {
+    if (watches.some(w => f.indexOf(w) === -1)) {
+      watches.push(f);
+    }
+  });
+} else {
+  watches = watches.concat(forces);
+}
 const watcher = chokidar.watch(watches, {
   persistent: true,
   ignored: excludes,
   ignoreInitial: true,
   usePolling: config.usePolling,
 });
-let watcherReady = watches.length === 0;
+watcherReady = watches.length === 0;
 
 process.on('SIGINT', () => {
   watcher.close();
@@ -76,10 +82,9 @@ watcher.on('change', handleChange);
 watcher.on('add', handleChange);
 watcher.on('unlink', handleChange);
 watcher.on('ready', () => {
-  if (!watcherReady) {
-    watcherReady = true;
-    startApp()
-  }
+  if (watcherReady) return;
+  watcherReady = true;
+  startApp()
 });
 watcher.on('error', (error) => {
   log('watcher failed', 3);
@@ -116,14 +121,11 @@ function killApp() {
 
 function startApp() {
   const execArgv = process.execArgv.slice(0);
-  if (config.debug) {
-    execArgv.push('--debug=' + config.debug);
-  }
   if (config.inspect) {
-    execArgv.push('--inspect');
+    execArgv.push('--inspect=' + config.inspect);
   }
-  if (config.debugBrk) {
-    execArgv.push('--debug-brk');
+  if (config.inspectBrk) {
+    execArgv.push('--inspect-brk');
   }
   const app = fork(path.resolve(__dirname, 'runner.js'), { execArgv: execArgv });
   app.send({

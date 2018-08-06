@@ -1,6 +1,6 @@
 {
   "name": "hotrun",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "hot module compiled for node.js, no need to restart server. it's useful to speed-up node.js development",
   "main": "index.js",
   "bin": {

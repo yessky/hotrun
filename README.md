@@ -20,7 +20,7 @@ global
 
 ## CLI Example
 
-`hotrun app.js --b -d -i -w src -x src/excule.js -f src/server.js`
+`hotrun app.js -i -b -w src -x src/excule.js -f src/server.js`
 
 ## API Example
 a working example see `./example`.
@@ -51,9 +51,8 @@ server.listen(3100, (err) => {
 
 ## CLI Options
 ```
--d, --debug [port]               Start debugger on port
--b, --debug-brk                  Enable debug break mode
--i, --inspect                    Enable inspect mode
+-i, --inspect [port]             Enable inspect mode on port
+-b, --debug-brk                  Enable inspect break mode
 -c, --config                     Specify a json config file
 -e, --extensions [extensions]    List of extensions to hook into [.es6,.js,.es,.jsx]
 -w, --watch [dir]                Watch directory "dir" or files, to hot compile
