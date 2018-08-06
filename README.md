@@ -41,9 +41,7 @@ app.use(middleware);
 emitter.on('hot', () => {
   console.log('module hot compiled done!')
 });
-
-const server = require('http').createServer(app.callback());
-server.listen(3100, (err) => {
+app.listen(3100, (err) => {
   if (err) throw err;
   console.log('app running at port 3100')
 })
@@ -52,7 +50,7 @@ server.listen(3100, (err) => {
 ## CLI Options
 ```
 -i, --inspect [port]             Enable inspect mode on port
--b, --debug-brk                  Enable inspect break mode
+-b, --inspect-brk                Enable inspect break mode
 -c, --config                     Specify a json config file
 -e, --extensions [extensions]    List of extensions to hook into [.es6,.js,.es,.jsx]
 -w, --watch [dir]                Watch directory "dir" or files, to hot compile
