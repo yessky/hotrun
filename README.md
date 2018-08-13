@@ -20,7 +20,7 @@ global
 
 ## CLI Example
 
-`hotrun app.js -i -b -w src -x src/excule.js -f src/server.js`
+`hotrun app.js -i 9999 -b -w src -x src/excule.js -f src/server.js`
 
 ## API Example
 a working example see `./example`.
