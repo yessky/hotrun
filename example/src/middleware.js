@@ -7,8 +7,11 @@ const hotArray = require('./hot-array');
 const hotObject = require('./hot-object');
 
 module.exports = async (ctx) => {
+  console.log(typeof hotFunc);
   hotFunc();
   await hotAsyncFunc();
+  const obj = new hotFunc();
+  console.log('ctor:', JSON.stringify(obj));
   ctx.type = 'html';
   ctx.body = `
     hotrun tasting:<br>
