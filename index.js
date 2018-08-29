@@ -41,7 +41,7 @@ module.exports = (opts = {}) => {
       if (module_ && handle) {
         handle(module_, module_.filename);
         log(`recompiled in ${ Date.now() - ts } ms`);
-        emitter.emit('hot')
+        emitter.emit('hot',{filename:filename})
       }
     })
   });
