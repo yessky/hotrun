@@ -1,7 +1,13 @@
 # hotrun
 hot module compiled for node.js, no need to restart server. it's useful to speed-up node.js development
 
-#### NOTICE: do not use it in production mode.
+#### Notice & Limitation
+
+ - do not use it in production mode.
+
+ - not support change exports variable type, as we can't convert `object` to `function`
+
+ - `typeof` operator return `object` for exports that returns primitive value 
 
 ## Description
 
